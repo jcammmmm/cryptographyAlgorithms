@@ -4,9 +4,7 @@ BLOCK_SIZE = 2
 MATRIX_SIZE = 5
 
 def main():
-
-  # TODO remove repeated chars from key
-  key = "yoanpiz" # input("clave: \n")
+  key = "mamita" # "yoanpiz" # input("clave: \n")
   option = 1
 
   pt = "this secret message is encrypted" # input("texto claro: \n")
@@ -117,6 +115,8 @@ def build_key_matrix(key):
 
   # alphabet format
   chars = "ABCDEFGHJKLMNOPQRSTUVWXYZ"
+
+  # remove duplicates and checks quickly if chars belongs to key string
   key_set = {c : 0 for c in key}
 
   # compute chars - key
@@ -128,7 +128,7 @@ def build_key_matrix(key):
   # build the key map
   kmatrix = [0 for i in range(MATRIX_SIZE*MATRIX_SIZE)]
   j = 0
-  for k in key:
+  for k in key_set.keys():
     kmatrix[j] = k
     j += 1
   for i in chars_minus_k:
