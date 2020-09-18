@@ -4,16 +4,19 @@ BLOCK_SIZE = 2
 MATRIX_SIZE = 5
 
 def main():
-  key = "mamita" # "yoanpiz" # input("clave: \n")
-  option = 1
-
-  pt = "this secret message is encrypted" # input("texto claro: \n")
-  print(formatText(pt))
-
-  ct = encrypt(key, pt)
-  print(ct)
-  dt = decrypt(key, ct)
-  print(dt)
+  option = input("¿cifrar o descifrar? (1 o 0): ")
+  key = input("clave:")
+  if (int(option) == 1):
+    plaintext = input("texto claro:")
+    ciphertext = encrypt(key, plaintext)
+    print("texto cifrado:", ciphertext)
+  else:
+    ciphertext = input("texto cifrado:")
+    plaintext = decrypt(key, ciphertext)
+    print("texto claro:", plaintext)
+  
+  # "yoanpiz"
+  # "this secret message is encrypted"
 
 
 def encrypt(key, plaintext):
