@@ -4,12 +4,13 @@ BLOCK_SIZE = 2
 MATRIX_SIZE = 5
 
 def main():
+
   # TODO remove repeated chars from key
   key = "yoanpiz" # input("clave: \n")
   option = 1
 
-  # TODO add case when repeated letter
-  pt = "this secret mesxsage is encrypted" # input("texto claro: \n")
+  pt = "this secret message is encrypted" # input("texto claro: \n")
+  print(formatText(pt))
 
   ct = encrypt(key, pt)
   print(ct)
@@ -22,7 +23,6 @@ def encrypt(key, plaintext):
   # plaintext format
   plaintext = formatText(plaintext)
   ciphertext = "";
-  if len(plaintext)%2 == 1: plaintext += "X"
   blocks = [(plaintext[i:i + BLOCK_SIZE]) for i in range(0, len(plaintext), BLOCK_SIZE)] 
   for block in blocks:
     X, Y = encrypt_block(block, key_matrix)
@@ -55,7 +55,6 @@ def encrypt_block(block, key_matrix):
 def decrypt(key, ciphertext):
   key_matrix = build_key_matrix(key)
   # formatting
-  ciphertext = formatText(ciphertext)
   plaintext = "";
   blocks = [(ciphertext[i:i + BLOCK_SIZE]) for i in range(0, len(ciphertext), BLOCK_SIZE)] 
   for block in blocks:
@@ -96,11 +95,25 @@ def get_letter(i, j, key_matrix):
   return key_matrix[i*MATRIX_SIZE + j]
 
 def formatText(text):
-  return text.upper().replace("I", "J").replace(' ','')
+  text = text.upper().replace("I", "J").replace(' ','')
+
+  cprev = ' '
+  for i in range(len(text)):
+    ccurr = text[i]
+    if ccurr == cprev and i%2 == 1:
+      text = text[:i - 1] + "X" + text[i - 1:]
+    cprev = ccurr
+
+  if len(text)%2 == 1: 
+    text += "X"
+  return text
+
+def formatKey(key):
+  return key.upper().replace("I", "J").replace(' ','')
 
 def build_key_matrix(key):
   # key format
-  key = formatText(key)
+  key = formatKey(key)
 
   # alphabet format
   chars = "ABCDEFGHJKLMNOPQRSTUVWXYZ"
