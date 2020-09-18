@@ -1,22 +1,33 @@
+# Our alphabet does not contain 'I' vowel letter, see formatText procedure.
+# Also, every processed text is uppercases.
 BLOCK_SIZE = 2
 MATRIX_SIZE = 5
 
-# TODO remove repeated chars from key
-key = "yoanpiz" # input("clave: \n")
+def main():
+  # TODO remove repeated chars from key
+  key = "yoanpiz" # input("clave: \n")
+  option = 1
 
-# TODO add case when repeated letter
-pt = "this secret mesxsage is encrypted" # input("texto claro: \n")
+  # TODO add case when repeated letter
+  pt = "this secret mesxsage is encrypted" # input("texto claro: \n")
+
+  ct = encrypt(key, pt)
+  print(ct)
+  dt = decrypt(key, ct)
+  print(dt)
+
 
 def encrypt(key, plaintext):
   key_matrix = build_key_matrix(key)
   # plaintext format
-  plaintext = plaintext.upper().replace("I", "J").replace(' ','')
-  cyphertext = "";
+  plaintext = formatText(plaintext)
+  ciphertext = "";
   if len(plaintext)%2 == 1: plaintext += "X"
   blocks = [(plaintext[i:i + BLOCK_SIZE]) for i in range(0, len(plaintext), BLOCK_SIZE)] 
   for block in blocks:
     X, Y = encrypt_block(block, key_matrix)
-    cyphertext += X + Y
+    ciphertext += X + Y
+  return ciphertext
 
   
 def encrypt_block(block, key_matrix):
@@ -40,6 +51,41 @@ def encrypt_block(block, key_matrix):
     raise Exception("Logic error same letter are in the same")
   return encrypted_block[0], encrypted_block[1]
 
+# same as encrypt but var names are changed...
+def decrypt(key, ciphertext):
+  key_matrix = build_key_matrix(key)
+  # formatting
+  ciphertext = formatText(ciphertext)
+  plaintext = "";
+  blocks = [(ciphertext[i:i + BLOCK_SIZE]) for i in range(0, len(ciphertext), BLOCK_SIZE)] 
+  for block in blocks:
+    X, Y = decrypt_block(block, key_matrix)
+    plaintext += X + Y
+  return plaintext
+
+# same as encrypt_block but reversed...
+def decrypt_block(block, key_matrix):
+  decrypted_block = ['','']
+
+  r1, c1 = get_coordinates(block[0], key_matrix)
+  r2, c2 = get_coordinates(block[1], key_matrix)
+
+  if r1 != r2 and c1 != c2:
+    decrypted_block[0] = get_letter(r1, c2, key_matrix)
+    decrypted_block[1] = get_letter(r2, c1, key_matrix)
+  elif r1 == r2:
+    decrypted_block[0] = get_letter(r1, (c1 - 1)%MATRIX_SIZE, key_matrix)
+    decrypted_block[1] = get_letter(r2, (c2 - 1)%MATRIX_SIZE, key_matrix)
+  elif c1 == c2: 
+    decrypted_block[0] = get_letter((r1 - 1)%MATRIX_SIZE, c2, key_matrix)
+    decrypted_block[1] = get_letter((r2 - 1)%MATRIX_SIZE, c2, key_matrix)
+  # The case when both r1, r2 and c1, c2 are equals doesnt happen since we
+  # do not have concecutive letters...
+  else:
+    raise Exception("Logic error same letter are in the same")
+  return decrypted_block[0], decrypted_block[1]
+
+
 def get_coordinates(letter, key_matrix):
   index = key_matrix.index(letter)
   i = index//MATRIX_SIZE
@@ -49,9 +95,12 @@ def get_coordinates(letter, key_matrix):
 def get_letter(i, j, key_matrix): 
   return key_matrix[i*MATRIX_SIZE + j]
 
+def formatText(text):
+  return text.upper().replace("I", "J").replace(' ','')
+
 def build_key_matrix(key):
   # key format
-  key = key.upper().replace("I", "J")
+  key = formatText(key)
 
   # alphabet format
   chars = "ABCDEFGHJKLMNOPQRSTUVWXYZ"
@@ -74,6 +123,5 @@ def build_key_matrix(key):
     j += 1
   return kmatrix
 
-
 if __name__ == "__main__":
-  encrypt(key, pt)
+  main()
