@@ -9,15 +9,30 @@ def main():
   text = format_text(text)
   key = build_key(format_text(key), len(text))
 
-  print(encrypt(text, key, tableau))
+  cyphertext = encrypt(text, key, tableau)
+  print(cyphertext)
+  plaintext = decrypt(cyphertext, key, tableau)
+  print(plaintext)
 
 def encrypt(plaintext, key, tableau):
   cyphertext = []
   for k in range(len(plaintext)):
-    j = ord(plaintext[k]) - CHAR_ASCII_POS
-    i = ord(key[k]) - CHAR_ASCII_POS
+    j = ord(key[k]) - CHAR_ASCII_POS
+    i = ord(plaintext[k]) - CHAR_ASCII_POS
     cyphertext.append(chr(get_symbol(i, j, tableau) + CHAR_ASCII_POS))
-  return cyphertext
+  return ''.join(cyphertext)
+
+# we must find for each cyphertext letter -> 26*n complexity, where 
+# n is the the lenght of the ct.
+def decrypt(cyphertext, key, tableau):
+  plaintext = []
+  for k in range(len(cyphertext)):
+    j = ord(key[k]) - CHAR_ASCII_POS
+    i = ord(cyphertext[k]) - CHAR_ASCII_POS
+    while i != tableau[j]:
+      j += ALPHABET_SIZE
+    plaintext.append(chr(j//ALPHABET_SIZE + CHAR_ASCII_POS))
+  return ''.join(plaintext)
 
 # The tableau is filled with numbers not letters in order
 # to perform generalizations more easily
@@ -44,5 +59,4 @@ def get_symbol(i, j, tableau):
   return tableau[i*ALPHABET_SIZE + j]
       
 if __name__ == '__main__':
-  TABLEAU = generate_tableau()
   main()
