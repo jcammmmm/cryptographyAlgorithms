@@ -2,17 +2,34 @@ ALPHABET_SIZE = 26
 CHAR_ASCII_POS = 65
 
 def main():
-  key = 'RELATIONS'
-  text = 'TO BE OR NOT TO BE THAT IS THE QUESTION'
-
+  option = input("¿cifrar o descifrar? (1 o 0): ")
+  key = 'MAMITA' # input("clave: ")
+  t = 3 # input("t: ")
   tableau = generate_tableau()
-  text = format_text(text)
-  key = build_key(format_text(key), len(text))
+  
+  if (int(option) == 1):
+    plaintext = input("texto claro: ")
+    plaintext = format_text(plaintext)
+    key = build_key(format_text(key), len(plaintext))
+    cyphertext = encrypt(plaintext, key, tableau)
+    print_tokens(tokenize(plaintext, t))
+    print_tokens(tokenize(cyphertext, t))
+  else:
+    cyphertext = input("texto cifrado: ")
+    cyphertext = format_text(cyphertext)
+    key = build_key(format_text(key), len(cyphertext))
+    plaintext = decrypt(cyphertext, key, tableau)
+    print_tokens(tokenize(cyphertext, t))
+    print_tokens(tokenize(plaintext, t))
 
-  cyphertext = encrypt(text, key, tableau)
-  print(cyphertext)
-  plaintext = decrypt(cyphertext, key, tableau)
-  print(plaintext)
+def tokenize(text, size):
+  txtsize = len(text)
+  tokens = [(text[i:i + size]) for i in range(0, len(text), size)] 
+  return tokens
+
+def print_tokens(tokens):
+  print(' '.join(tokens))
+
 
 def encrypt(plaintext, key, tableau):
   cyphertext = []
