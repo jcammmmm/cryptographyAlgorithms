@@ -3,8 +3,8 @@ CHAR_ASCII_POS = 65
 
 def main():
   option = input("¿cifrar o descifrar? (1 o 0): ")
-  key = 'MAMITA' # input("clave: ")
-  t = 3 # input("t: ")
+  key = input("clave: ")
+  t = int(input("t: "))
   tableau = generate_tableau()
   
   if (int(option) == 1):
