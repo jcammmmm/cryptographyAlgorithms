@@ -6,31 +6,35 @@ ALPHABET_SIZE = 26
 def main():
   key = "11 8 3 7"
   plaintext = "JULY"
+  cyphertext = "VKFZRVWTIAZSMISGKA"
   key = build_matrix(key)
   check_matrix(key)
+  get_modular_inverse_matrix(key)
   opt = "-e"
-  if opt == "-e":
-    print(encrypt(key, plaintext))
-
-  else: 
-    pass
+  if opt == "-esdf":
+    cyphertext = encrypt(key, plaintext)
+    print(cyphertext)
+  else:
+    plaintext = decrypt(key, cyphertext)
+    print(plaintext)
   # get_valid_matrix(2)
 
 def encrypt(key, plaintext):
-  plaintext = to_nums(plaintext)
+  return multiply_and_concat(key, plaintext)
+
+def decrypt(key, cyphertext):
+  key_inv = get_modular_inverse_matrix(key)
+  return multiply_and_concat(key_inv, cyphertext)
   
-  blocks = [(plaintext[i:i + BLOCK_SIZE]) for i in range(0, len(plaintext), BLOCK_SIZE)]
-  cyphertext = []
+def multiply_and_concat(matrix, text):
+  text = to_nums(text)
+  blocks = [(text[i:i + BLOCK_SIZE]) for i in range(0, len(text), BLOCK_SIZE)]
+  out = []
   for b in blocks:
-    c = np.matmul(b, key)
-    cyphertext.append(c[0]%ALPHABET_SIZE)
-    cyphertext.append(c[1]%ALPHABET_SIZE)
-
-  cyphertext = to_text(cyphertext)
-  return "".join(cyphertext)
-
-def encrypt_block(block, matrix):
-  pass
+    c = np.matmul(b, matrix)
+    out.append(c[0]%ALPHABET_SIZE)
+    out.append(c[1]%ALPHABET_SIZE)
+  return to_text(out)
 
 def check_matrix(matrix):
   A = matrix
@@ -60,7 +64,25 @@ def get_valid_matrix(size):
     M = np.reshape(M, (size, size))
     mat_ok = check_matrix(M)
   print(M)
+
+def get_modular_inverse_matrix(matrix):
+  det = int(np.round(np.linalg.det(matrix)))
+  d, a, b = egcd(det, ALPHABET_SIZE)
+  
+  # as d = 1 => ax + by = 1 -> ax - 1 = -by
+  if d == 1:
+    M = matrix
+    M_adj = [[0, 0], [0, 0]]
+    M_adj[0][0] =  M[1][1]
+    M_adj[0][1] = -M[0][1]
+    M_adj[1][0] = -M[1][0]
+    M_adj[1][1] =  M[0][0]
+    M = np.array(M_adj)*a
+    return M
+  else:
+    raise Exception("LA MATRIX NO TIENE INVERSA MODULO " + str(ALPHABET_SIZE))
     
+
 
 def build_matrix(str_key):
   num_key = [int(i) for i in str_key.split(' ')];
