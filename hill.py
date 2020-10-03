@@ -1,32 +1,43 @@
 import numpy as np
+import sys
 
 BLOCK_SIZE = 2
 ALPHABET_SIZE = 26
 
+# Example usage:
+# py .\hill.py -e -k "11 8 3 7" -m "PLAINTEXT"  :: encrypt
+# py .\hill.py -d -k "11 8 3 7" -m "CIPHERTEXT" :: decrypt
+# py .\hill.py -g                               :: generate
 def main():
-  key = "11 8 3 7"
-  plaintext = "JULY"
-  cyphertext = "VKFZRVWTIAZSMISGKA"
-  key = build_matrix(key)
-  check_matrix(key)
-  get_modular_inverse_matrix(key)
-  opt = "-e"
-  if opt == "-esdf":
+  # cyphertext = "VKFZRVWTIAZSMISGKA"
+  opt = sys.argv[1] # should be -e to encrypt or -d to decrypt
+  if opt == "-e":
+    key = sys.argv[3]
+    plaintext = sys.argv[5]
     cyphertext = encrypt(key, plaintext)
     print(cyphertext)
-  else:
+  elif opt == "-d":
+    key = sys.argv[3]
+    cyphertext = sys.argv[5]
     plaintext = decrypt(key, cyphertext)
     print(plaintext)
-  # get_valid_matrix(2)
+  else:
+    K = get_valid_matrix(2)
+    print(np.reshape(K, -1))
 
 def encrypt(key, plaintext):
+  key = build_matrix(key)
+  check_matrix(key)
   return multiply_and_concat(key, plaintext)
 
 def decrypt(key, cyphertext):
+  key = build_matrix(key)
+  check_matrix(key)
   key_inv = get_modular_inverse_matrix(key)
   return multiply_and_concat(key_inv, cyphertext)
   
 def multiply_and_concat(matrix, text):
+
   text = to_nums(text)
   blocks = [(text[i:i + BLOCK_SIZE]) for i in range(0, len(text), BLOCK_SIZE)]
   out = []
@@ -38,13 +49,13 @@ def multiply_and_concat(matrix, text):
 
 def check_matrix(matrix):
   A = matrix
+  
   detA = int(np.round(np.linalg.det(A)))
   # has modular inverse? 
   # gcd(x, y) = (d, a, b) :: ax + by = d
   # if d = 1 => ax + by = 1 -> ax - 1 = -by
   (d, a, b) = egcd(detA, ALPHABET_SIZE)
   if d != 1:
-    print("LA MATRIZ NO TIENE INVERSA MODULAR, SU DETERMINANTE NO ES 1.")
     return False
   else:
     return True
@@ -63,7 +74,7 @@ def get_valid_matrix(size):
     M = [np.random.randint(15) for i in range(size*size)]
     M = np.reshape(M, (size, size))
     mat_ok = check_matrix(M)
-  print(M)
+  return M
 
 def get_modular_inverse_matrix(matrix):
   det = int(np.round(np.linalg.det(matrix)))
@@ -80,13 +91,16 @@ def get_modular_inverse_matrix(matrix):
     M = np.array(M_adj)*a
     return M
   else:
-    raise Exception("LA MATRIX NO TIENE INVERSA MODULO " + str(ALPHABET_SIZE))
+    raise Exception("LA MATRIZ NO TIENE INVERSA MODULO " + str(ALPHABET_SIZE))
     
 
 
 def build_matrix(str_key):
   num_key = [int(i) for i in str_key.split(' ')];
   m_size = np.sqrt(len(num_key))
+  if m_size != 2:
+    raise Exception("LA MATRIZ NO ES 2X2")
+
   if not m_size.is_integer():
     raise Exception("LA MATRIZ NO ES CUADRADA")
   return np.reshape(num_key, (int(m_size), int(m_size)))
