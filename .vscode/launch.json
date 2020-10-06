@@ -11,7 +11,8 @@
       "program": "${file}",
       "console": "integratedTerminal",
       // "args": ["-e", "-k", "11 8 3 7", "-m", "PLAINTEXT"]
-      "args": ["-d", "-k", "11 8 3 7", "-m", "QPYESDJLFO"]
+      // "args": ["-e", "-k", "1 0 0 0 | 0 0 0 0 | 0 1 0 1 | 0 0 1 0", "-m", "CIPHERTEXT"]
+      "args": ["-d", "-k", "1 0 0 0 | 0 0 0 0 | 0 1 0 1 | 0 0 1 0", "-m", "CXXETRXXTIXPXEHX"]
     }
   ]
 }

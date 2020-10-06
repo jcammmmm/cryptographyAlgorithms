@@ -1,8 +1,27 @@
+import sys
+
+# py .\turning.py -e -k "1 0 0 0 | 0 0 0 0 | 0 1 0 1 | 0 0 1 0" -m "PLAINTEXT"  :: encrypt
+# py .\turning.py -d -k "1 0 0 0 | 0 0 0 0 | 0 1 0 1 | 0 0 1 0" -m "CIPHERTEXT" :: decrypt
 def main():
-  txt = 'JIMATTACKSATDAWN'
-  grille = "1 0 0 0 | 0 0 0 0 | 0 1 0 1 | 0 0 1 0"
-  K = [ list(map(int, rr.split())) for rr in grille.split('|') ]
-  encrypt(txt, K)
+  opt = sys.argv[1] # -e to encrypt or -d to decrypt
+  K = build_grille(sys.argv[3])
+  if opt == "-e":
+    ptxt = adjust_to_key(sys.argv[5], K);
+    ctxt = encrypt(ptxt, K)
+    print(ctxt)
+  else:
+    ctxt = sys.argv[5]
+    ptxt = decrypt(ctxt, K)
+    print(ptxt)
+
+def build_grille(str):
+    return [ list(map(int, rr.split())) for rr in str.split('|') ]
+
+def adjust_to_key(txt, K):
+  n = len(K)
+  if len(txt) < n*n:
+    txt = txt + 'X'*(n*n-len(txt))
+  return txt
 
 def encrypt(ptxt, K):
   n = len(K)
@@ -14,7 +33,23 @@ def encrypt(ptxt, K):
       ctxt[x][y] = ptxt[i]
       i += 1
     turn(K)
-    print_grille(ctxt)
+  return "".join(["".join(row) for row in ctxt])
+
+def decrypt(ctxt, K):
+  n = len(K)
+  ptxt = []
+  ctxt = build_matrix(ctxt, K)
+  for t in range(4):
+    locs = where_to_write(K)
+    for x, y in locs:
+      ptxt.append(ctxt[x][y])
+    turn(K)
+  return "".join(ptxt)
+
+def build_matrix(ctxt, K):
+  n = len(K)
+  return [list(ctxt[i:i+n]) for i in range(0, len(ctxt), n)] 
+
 
 def where_to_write(K):
   locs = []
