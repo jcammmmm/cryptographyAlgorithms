@@ -12,7 +12,7 @@
       "console": "integratedTerminal",
       // "args": ["-e", "-k", "11 8 3 7", "-m", "PLAINTEXT"]
       // "args": ["-e", "-k", "1 0 0 0 | 0 0 0 0 | 0 1 0 1 | 0 0 1 0", "-m", "CIPHERTEXT"]
-      "args": ["-d", "-k", "1 0 0 0 | 0 0 0 0 | 0 1 0 1 | 0 0 1 0", "-m", "CXXETRXXTIXPXEHX"]
+      // "args": ["-d", "-k", "1 0 0 0 | 0 0 0 0 | 0 1 0 1 | 0 0 1 0", "-m", "CXXETRXXTIXPXEHX"]
     }
   ]
 }
