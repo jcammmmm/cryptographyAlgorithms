@@ -5,7 +5,7 @@ clc
 #----------------------------------------------------
 
 # CLOSURE
-coprimes_21 = [1, 2, 5, 8, 10, 11, 13, 16, 17, 19, 20]
+coprimes_21 = [1, 2, 4, 5, 8, 10, 11, 13, 16, 17, 19, 20]
 flag = 0;
 for i = coprimes_21
   for j = coprimes_21
@@ -58,11 +58,11 @@ flag
 flag = 0;
 identity = -1;
 for i = coprimes_21
-  id_ok = 0
-  ctr = 0
+  id_ok = 0;
+  ctr = 0;
   for j = coprimes_21
-    res1 = mod(i*j, 21)
-    res2 = mod(j*i, 21)
+    res1 = mod(i*j, 21);
+    res2 = mod(j*i, 21);
     if (res1 != j)
       break;
     endif
@@ -73,3 +73,12 @@ for i = coprimes_21
   endif
 endfor
 identity
+
+# EULER THEOREM TEST
+for i = coprimes_21
+  phi = size(coprimes_21)(2);
+  rem = power(i, phi) - 1;
+  if (mod(rem, 21) != 0)
+    printf("Euler's theorem is not true!")
+  endif
+endfor
